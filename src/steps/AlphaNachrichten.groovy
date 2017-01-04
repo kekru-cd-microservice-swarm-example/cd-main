@@ -1,4 +1,3 @@
-#!/usr/bin/groovy
 package steps
 
 class AlphaNachrichten implements Serializable {
