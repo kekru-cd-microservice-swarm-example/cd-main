@@ -5,4 +5,4 @@ if [[ -z $@ ]]; then
    exit 1
 fi
 
-docker service inspect --format='{"name": {{json .Spec.Name}}, "portmappings": {{json .Endpoint.Ports}}}' $(docker stack services -q $@)
+./docker service inspect --format='{"name": {{json .Spec.Name}}, "portmappings": {{json .Endpoint.Ports}}}' $(./docker stack services -q $@)
