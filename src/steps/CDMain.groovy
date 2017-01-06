@@ -68,7 +68,7 @@ class CDMain implements Serializable {
 	}
 	
 	def writePortMappings(){
-		steps.sh getFilePath(PRINT_PORTMAPPINGS_FILE) + ' > ' + getFilePath('portmappings')
+		steps.sh getFilePath(PRINT_PORTMAPPINGS_FILE) + ' ' + stackName() + ' > ' + getFilePath('portmappings')
 	}
 	
 	def getPublishedPort(serviceName, targetPort){
