@@ -73,7 +73,7 @@ class CDMain implements Serializable {
 	
 	def getPublishedPort(serviceName, targetPort){
 		def file = new File(getFilePath('portmappings'))
-		println file.getAbsolutePath()
+		println new File().getAbsolutePath()
 		
 		if(!file.exists()){
 			writePortMappings()
