@@ -5,7 +5,7 @@ if [[ -z $@ ]]; then
    exit 1
 fi
 
-echo "Warte 5 Sekunden"
-sleep 5
+OUTPUT="["$(./docker service inspect --format='{"name": {{json .Spec.Name}}, "portmappings": {{json .Endpoint.Ports}}},' $(./docker stack services -q $@))"]"
+OUTPUT=$(sed "s|,]|]|g" <<< $OUTPUT)
 
-./docker service inspect --format='{"name": {{json .Spec.Name}}, "portmappings": {{json .Endpoint.Ports}}}' $(./docker stack services -q $@)
+echo $OUTPUT
