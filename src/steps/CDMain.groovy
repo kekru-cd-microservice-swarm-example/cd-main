@@ -10,7 +10,7 @@ class CDMain implements Serializable {
 		this.steps = steps	
 	}
 	
-	private void init(){
+	def init(){
 		//in init ausgelagert, wegen Bug https://issues.jenkins-ci.org/browse/JENKINS-26313
 	
 		steps.sh 'mkdir --parents cd-main'
