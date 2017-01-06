@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ ! -f docker-client/docker/docker ]; then
+   mkdir docker-client
+   curl https://get.docker.com/builds/Linux/i386/docker-latest.tgz | tar xvz --directory docker-client
+fi
+
+PWD=$(pwd)
+echo -e "#!/bin/sh\n$PWD/docker-client/docker/docker -H=10.1.6.210:2375 "'$@' > docker
+chmod +x docker
+./docker version

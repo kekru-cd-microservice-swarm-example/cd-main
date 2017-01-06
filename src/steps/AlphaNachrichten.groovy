@@ -6,4 +6,8 @@ class AlphaNachrichten implements Serializable {
   def docker(args) {
     steps.sh "./docker ${args}"
   }
+  
+  def printTree(){
+	steps.sh 'tree -d .'
+  }
 }
