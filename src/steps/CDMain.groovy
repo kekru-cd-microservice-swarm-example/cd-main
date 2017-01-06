@@ -5,6 +5,7 @@ class CDMain implements Serializable {
 	static final String DOCKER_STACK_FILE = 'base-setup.stack.yml'
 	static final String SETUP_DOCKERCLIENT_FILE = 'setup-dockerclient'
 	def steps
+	def commitId
   
 	CDMain(steps) {
 		this.steps = steps	
@@ -20,6 +21,9 @@ class CDMain implements Serializable {
 		
 		//Docker-Compose File in Workspace kopieren, um daraus einen Docker Stack generieren zu können, zum Aufsetzen einer Testumgebung
 		copyResource(DOCKER_STACK_FILE)
+		
+		steps.sh 'git rev-parse --short HEAD > .git/commit-id'
+		commitId = steps.readFile('.git/commit-id')
 	}
 	
 	private String copyResource(filename){
@@ -42,7 +46,7 @@ class CDMain implements Serializable {
 	}
   
 	def startTestenvironment(){
-		steps.sh './docker stack deploy --compose-file '+getFilePath(DOCKER_STACK_FILE)+' test1'
+		steps.sh './docker stack deploy --compose-file '+getFilePath(DOCKER_STACK_FILE)+' test1' + commitId
 	}
 
 	def docker(args) {
