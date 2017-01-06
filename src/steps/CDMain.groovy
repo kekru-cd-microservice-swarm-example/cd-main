@@ -27,7 +27,7 @@ class CDMain implements Serializable {
 	}
 	
 	private String copyResource(filename, executable){
-		fileContent = steps.libraryResource filename
+		def fileContent = steps.libraryResource filename
 		steps.writeFile file: 'cd-main/'+filename, text: fileContent
 		
 		if(executable){
