@@ -2,7 +2,7 @@
 
 if [ ! -f cd-main/docker-client/docker/docker ]; then
    mkdir --parents cd-main/docker-client
-   curl https://get.docker.com/builds/Linux/i386/docker-latest.tgz | tar xvz --directory docker-client
+   curl https://get.docker.com/builds/Linux/i386/docker-latest.tgz | tar xvz --directory cd-main/docker-client
 fi
 
 PWD=$(pwd)
