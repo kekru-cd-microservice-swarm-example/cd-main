@@ -7,7 +7,10 @@ class AlphaNachrichten implements Serializable {
     steps.sh "./docker ${args}"
   }
   
-  def printTree(){
-	steps.sh "tree -d ."
+  def printTree(){   
+
+    def fileContent = steps.libraryResource 'github.com/kekru-cd-microservice-swarm-example/cd-main@master/setup-dockerclient'
+    steps.writeFile file: 'setup-dockerclient2', text: fileContent
+	steps.sh "tree ."
   }
 }
