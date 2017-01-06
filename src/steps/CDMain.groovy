@@ -56,11 +56,11 @@ class CDMain implements Serializable {
 	}
 	
 	def fullServiceName(serviceName){
-		if(serviceName.startsWith(stackName + '_')){
+		if(serviceName.startsWith(stackName() + '_')){
 			return serviceName
 		}
 		
-		return stackName + '_' + serviceName
+		return stackName() + '_' + serviceName
 	}
   
 	def startTestenvironment(){
