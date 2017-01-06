@@ -66,24 +66,44 @@ class CDMain implements Serializable {
 	def startTestenvironment(){
 		steps.sh './docker stack deploy --compose-file ' + getFilePath(DOCKER_STACK_FILE) + ' ' + stackName()
 	}
-	
-	def writePortMappings(){
-		steps.sh getFilePath(PRINT_PORTMAPPINGS_FILE) + ' ' + stackName() + ' > ' + getFilePath('portmappings')
-	}
-	
-	def getPublishedPort(serviceName, targetPort){
-		def file = new File(getFilePath('portmappings'))
-		println new File("").getAbsolutePath()
+			
+	def getPublishedPort(serviceName, targetPort){		
 		
-		if(!file.exists()){
-			writePortMappings()
-		}
+		def portMappingsJSON = steps.sh (script: getFilePath(PRINT_PORTMAPPINGS_FILE) + ' ' + stackName(), returnStdout:true).trim()
+		/*
+		Beispiel für portMappingsJSON:
+		[{
+			"name": "cd91ff259_redis",
+			"portmappings": null
+		}, {
+			"name": "cd91ff259_newspage",
+			"portmappings": [{
+					"Protocol": "tcp",
+					"TargetPort": 8081,
+					"PublishedPort": 30001,
+					"PublishMode": "ingress"
+				}
+			]
+		}, {
+			"name": "cd91ff259_newspage-mongo",
+			"portmappings": null
+		}, {
+			"name": "cd91ff259_webdis",
+			"portmappings": [{
+					"Protocol": "tcp",
+					"TargetPort": 7379,
+					"PublishedPort": 30000,
+					"PublishMode": "ingress"
+				}
+			]
+		}]
+
+		*/
 		
-		def jsonSlurper = new JsonSlurper()
 		def publishedPort = -1
-		file.eachLine { line ->
-			//line ist zum Beispiel: {"name": "cd123_newspage", "portmappings": [{"Protocol":"tcp","TargetPort":8081,"PublishedPort":30001,"PublishMode":"ingress"}]}
-			def mappingInfo = jsonSlurper.parseText(line)
+		def mappingList = new JsonSlurper().parseText(portMappingsJSON)
+		
+		mappingList.each { mappingInfo ->
 			if(mappingInfo.name.equals(fullServiceName(serviceName))){
 				
 				mappingInfo.portmappings.each { mapping ->
