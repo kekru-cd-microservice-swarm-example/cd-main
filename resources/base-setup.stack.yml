@@ -11,7 +11,7 @@ services:
      - redis
 
   newspage:
-    image: "localhost:5000/newspage:1"
+    image: "manager1:5000/cd/newspage:2"
     ports: 
      - "0:8081"
     deploy:
@@ -37,7 +37,7 @@ services:
         max_failure_ratio: 0.5
 
   newspage-mongo:
-    image: "localhost:5000/newspage-mongo:1"
+    image: "manager1:5000/cd/newspage-mongo:2"
     depends_on:
      - webdis
     deploy:
