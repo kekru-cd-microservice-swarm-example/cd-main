@@ -3,14 +3,14 @@ package steps
 class CDMain implements Serializable {
 
 	static final String DOCKER_STACK_FILE = 'base-setup.stack.yml'
-	static final String SETUP_DOCKERCLIENT_FILE = 'base-setup.stack.yml'
+	static final String SETUP_DOCKERCLIENT_FILE = 'setup-dockerclient'
 	def steps
   
 	CDMain(steps) {
 		this.steps = steps	
 	}
 	
-	def init(){
+	public void init(){
 		//in init ausgelagert, wegen Bug https://issues.jenkins-ci.org/browse/JENKINS-26313
 	
 		steps.sh 'mkdir --parents cd-main'
