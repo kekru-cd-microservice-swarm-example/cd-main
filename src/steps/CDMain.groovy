@@ -7,8 +7,12 @@ class CDMain implements Serializable {
 	def steps
   
 	CDMain(steps) {
-		this.steps = steps
-		
+		this.steps = steps	
+	}
+	
+	private void init(){
+		//in init ausgelagert, wegen Bug https://issues.jenkins-ci.org/browse/JENKINS-26313
+	
 		steps.sh 'mkdir --parents cd-main'
 		
 		//Docker Client herunterladen	
@@ -16,7 +20,6 @@ class CDMain implements Serializable {
 		
 		//Docker-Compose File in Workspace kopieren, um daraus einen Docker Stack generieren zu können, zum Aufsetzen einer Testumgebung
 		copyResource(DOCKER_STACK_FILE)
-	
 	}
 	
 	private String copyResource(filename, executable){
