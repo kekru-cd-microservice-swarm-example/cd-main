@@ -28,6 +28,10 @@ Vagrant.configure(2) do |config|
   
     
   config.vm.define "manager1" do |machine|
+	machine.vm.provider :virtualbox do |p|
+		p.customize ["modifyvm", :id, "--memory", 2048]
+	end
+  
     machine.vm.hostname = "manager1"
 	machine.vm.network "private_network", ip: "10.1.6.210"
 	machine.vm.provision :hosts, :sync_hosts => true #DNS für die drei Maschinen. Hierfuer muss vagrant-hosts installiert werden: "vagrant plugin install vagrant-hosts"
