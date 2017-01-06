@@ -8,6 +8,6 @@ class AlphaNachrichten implements Serializable {
   }
   
   def printTree(){
-	steps.sh 'tree -d .'
+	steps.sh "tree -d ."
   }
 }
