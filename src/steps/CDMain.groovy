@@ -55,7 +55,7 @@ class CDMain implements Serializable {
 	}
 	
 	def fullServiceName(serviceName){
-		if(serviceName.startsWith(stackName + '_'){
+		if(serviceName.startsWith(stackName + '_')){
 			return serviceName
 		}
 		
@@ -71,8 +71,8 @@ class CDMain implements Serializable {
 	}
 	
 	def getPublishedPort(serviceName, targetPort){
-		def file = new File(getFilePath('portmappings')
-		if(!file.exists())){
+		def file = new File(getFilePath('portmappings'))
+		if(!file.exists()){
 			writePortMappings()
 		}
 		
