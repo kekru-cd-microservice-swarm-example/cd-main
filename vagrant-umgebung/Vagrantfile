@@ -39,7 +39,8 @@ Vagrant.configure(2) do |config|
 	#Jenkins starten
 	machine.vm.provision "shell", inline: "sudo mkdir --parents /data/jenkins"
 	machine.vm.provision "shell", inline: "sudo chmod 777 /data/jenkins"
-	machine.vm.provision "shell", inline: "docker run --name jenkins -d -p 8080:8080 -p 8079:50000 -v /data/jenkins:/var/jenkins_home jenkins:2.19.4-alpine"
+	machine.vm.provision "shell", inline: "docker build -t myjenkins /vagrant/jenkins" 
+	machine.vm.provision "shell", inline: "docker run --name jenkins -d -p 8080:8080 -p 8079:50000 -v /data/jenkins:/var/jenkins_home myjenkins"
 	
 	#Swarm Visualizer starten
 	machine.vm.provision "shell", inline: "sudo chmod 666 /var/run/docker.sock"
