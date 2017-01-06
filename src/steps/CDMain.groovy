@@ -16,10 +16,14 @@ class CDMain implements Serializable {
 		steps.sh 'mkdir --parents cd-main'
 		
 		//Docker Client herunterladen	
-		steps.sh(copyResource(SETUP_DOCKERCLIENT_FILE))
+		steps.sh(copyResource(SETUP_DOCKERCLIENT_FILE, true))
 		
 		//Docker-Compose File in Workspace kopieren, um daraus einen Docker Stack generieren zu können, zum Aufsetzen einer Testumgebung
 		copyResource(DOCKER_STACK_FILE)
+	}
+	
+	private String copyResource(filename){
+		copyResource(filename, false)
 	}
 	
 	private String copyResource(filename, executable){
