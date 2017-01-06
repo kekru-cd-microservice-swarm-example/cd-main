@@ -1,9 +1,12 @@
 package steps
+import java.io.*
 
 class CDMain implements Serializable {
 
 	static final String DOCKER_STACK_FILE = 'base-setup.stack.yml'
 	static final String SETUP_DOCKERCLIENT_FILE = 'setup-dockerclient'
+	static final String PRINT_PORTMAPPINGS_FILE = 'print-service-portmappings'
+	
 	def steps
 	def commitId
   
@@ -21,6 +24,8 @@ class CDMain implements Serializable {
 		
 		//Docker-Compose File in Workspace kopieren, um daraus einen Docker Stack generieren zu können, zum Aufsetzen einer Testumgebung
 		copyResource(DOCKER_STACK_FILE)
+		
+		copyResource(PRINT_PORTMAPPINGS_FILE, true)
 		
 		steps.sh 'git rev-parse --short HEAD > .git/commit-id'
 		commitId = steps.readFile('.git/commit-id')
@@ -44,9 +49,50 @@ class CDMain implements Serializable {
 	private String getFilePath(filename){
 		return './cd-main/'+filename
 	}
+	
+	def stackName(){
+		'cd' + commitId
+	}
+	
+	def fullServiceName(serviceName){
+		if(serviceName.startsWith(stackName + '_'){
+			return serviceName
+		}
+		
+		return stackName + '_' + serviceName
+	}
   
 	def startTestenvironment(){
-		steps.sh './docker stack deploy --compose-file '+getFilePath(DOCKER_STACK_FILE)+' test1' + commitId
+		steps.sh './docker stack deploy --compose-file ' + getFilePath(DOCKER_STACK_FILE) + ' ' + stackName()
+	}
+	
+	def writePortMappings(){
+		steps.sh getFilePath(PRINT_PORTMAPPINGS_FILE) + ' > ' + getFilePath('portmappings')
+	}
+	
+	def getPublishedPort(serviceName, targetPort){
+		def file = new File(getFilePath('portmappings')
+		if(!file.exists())){
+			writePortMappings()
+		}
+		
+		def jsonSlurper = new JsonSlurper()
+		def publishedPort = -1
+		file.eachLine { line ->
+			//line ist zum Beispiel: {"name": "cd123_newspage", "portmappings": [{"Protocol":"tcp","TargetPort":8081,"PublishedPort":30001,"PublishMode":"ingress"}]}
+			def mappingInfo = jsonSlurper.parseText(line)
+			if(mappingInfo.name.equals(fullServiceName(serviceName))){
+				
+				mappingInfo.portmappings.each { mapping ->
+					if(mapping.TargetPort.equals(targetPort)){
+						publishedPort = mapping.PublishedPort
+					}
+				}
+				
+			}
+		}
+		
+		return publishedPort
 	}
 
 	def docker(args) {
