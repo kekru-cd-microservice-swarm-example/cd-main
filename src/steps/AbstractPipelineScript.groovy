@@ -27,7 +27,7 @@ abstract class AbstractPipelineScript {
         return getFilePath(filename)
     }
 
-    private String getFilePath(filename) {
+    protected String getFilePath(filename) {
         return './cd-main/' + filename
     }
 
