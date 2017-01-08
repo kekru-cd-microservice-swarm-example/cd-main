@@ -71,6 +71,7 @@ class CDMain implements Serializable {
     def getPublishedPort(serviceName, targetPort) {
 
         def portMappingsJSON = steps.sh (script: getFilePath(PRINT_PORTMAPPINGS_FILE) + ' ' + stackName(), returnStdout:true).trim()
+        println 'Portmappings: ' + portMappingsJSON
         /*
         Beispiel für portMappingsJSON:
         [{
@@ -125,8 +126,8 @@ class CDMain implements Serializable {
 
     /*public static void main(String... args) {
         def main = new CDMain(null)
-        main.commitId = '91ff259'
-        println main.getPublishedPort('cd91ff259_newspage', 8081)
+        main.commitId = '24742df'
+        println main.getPublishedPort('newspage', 8081)
     }*/
 
 }
