@@ -29,8 +29,8 @@ class CDMain implements Serializable {
 
         copyResource(PRINT_PORTMAPPINGS_FILE, true)
 
-        steps.sh 'git rev-parse --short HEAD > .git/commit-id'
-        commitId = steps.readFile('.git/commit-id')
+
+        commitId = steps.sh(script: 'git rev-parse --short HEAD', returnStdout:true).trim()
     }
 
     private String copyResource(filename) {
@@ -71,8 +71,8 @@ class CDMain implements Serializable {
     def getPublishedPort(String serviceName, int targetPort) {
 
         def portMappingsJSON =
-                '[{"name": "cd24742df_newspage-mongo", "portmappings": null}, {"name": "cd24742df_newspage", "portmappings": [{"Protocol":"tcp","TargetPort":8081,"PublishedPort":30001,"PublishMode":"ingress"}]}, {"name": "cd24742df_redis", "portmappings": null}, {"name": "cd24742df_webdis", "portmappings": [{"Protocol":"tcp","TargetPort":7379,"PublishedPort":30000,"PublishMode":"ingress"}]}]'
-                //steps.sh (script: getFilePath(PRINT_PORTMAPPINGS_FILE) + ' ' + stackName(), returnStdout:true).trim()
+                //'[{"name": "cd24742df_newspage-mongo", "portmappings": null}, {"name": "cd24742df_newspage", "portmappings": [{"Protocol":"tcp","TargetPort":8081,"PublishedPort":30001,"PublishMode":"ingress"}]}, {"name": "cd24742df_redis", "portmappings": null}, {"name": "cd24742df_webdis", "portmappings": [{"Protocol":"tcp","TargetPort":7379,"PublishedPort":30000,"PublishMode":"ingress"}]}]'
+                steps.sh (script: getFilePath(PRINT_PORTMAPPINGS_FILE) + ' ' + stackName(), returnStdout:true).trim()
         //steps.echo 'Portmappings: ' + portMappingsJSON
         /*
         Beispiel für portMappingsJSON:
