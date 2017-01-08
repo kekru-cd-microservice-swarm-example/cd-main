@@ -5,7 +5,7 @@ import groovy.json.JsonSlurper
 /**
  * Created by krummenauer on 08.01.2017.
  */
-class DockerStack extends AbstractPipelineScript {
+class DockerStack extends AbstractPipelineScript implements Serializable {
 
     def stackName
     def nameExtension
