@@ -1,6 +1,6 @@
 package steps
 
-import groovy.json.JsonSlurper
+import groovy.json.JsonSlurperClassic
 
 /**
  * Created by krummenauer on 08.01.2017.
@@ -60,7 +60,7 @@ class DockerStack extends AbstractPipelineScript implements Serializable {
         */
 
 
-        def mappingList = new JsonSlurper().parseText(portMappingsJSON)
+        def mappingList = new JsonSlurperClassic().parseText(portMappingsJSON)
         for (def mappingInfo : mappingList) {
 
             if (String.valueOf(mappingInfo.name).equals(String.valueOf(fullServiceName(serviceName)))) {
