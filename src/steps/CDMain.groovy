@@ -106,15 +106,15 @@ class CDMain implements Serializable {
 
 
         def mappingList = new JsonSlurper().parseText(portMappingsJSON)
-        steps.echo mappingList
+        steps.echo String.valueOf(mappingList)
         for (def mappingInfo : mappingList) {
-            steps.echo mappingInfo
+            steps.echo String.valueOf(mappingInfo)
             if (String.valueOf(mappingInfo.name).equals(String.valueOf(fullServiceName(serviceName)))) {
-                steps.echo 'Find1 : ' + mappingInfo.name
+                steps.echo 'Find1 : ' + String.valueOf(mappingInfo.name)
                 for (def mapping : mappingInfo.portmappings) {
-                    steps.echo mapping
+                    steps.echo String.valueOf(mapping)
                     if (String.valueOf(mapping.TargetPort).equals(String.valueOf(targetPort))) {
-                        steps.echo 'Find2: ' + mapping.TargetPort
+                        steps.echo 'Find2: ' + String.valueOf(mapping.TargetPort)
                         return mapping.PublishedPort
                     }
                 }
