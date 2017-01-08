@@ -68,10 +68,12 @@ class CDMain implements Serializable {
         steps.sh './docker stack deploy --compose-file ' + getFilePath(DOCKER_STACK_FILE) + ' ' + stackName()
     }
 
-    def getPublishedPort(serviceName, targetPort) {
+    def getPublishedPort(String serviceName, int targetPort) {
 
-        def portMappingsJSON = steps.sh (script: getFilePath(PRINT_PORTMAPPINGS_FILE) + ' ' + stackName(), returnStdout:true).trim()
-        steps.echo 'Portmappings: ' + portMappingsJSON
+        def portMappingsJSON =
+                '[{"name": "cd24742df_newspage-mongo", "portmappings": null}, {"name": "cd24742df_newspage", "portmappings": [{"Protocol":"tcp","TargetPort":8081,"PublishedPort":30001,"PublishMode":"ingress"}]}, {"name": "cd24742df_redis", "portmappings": null}, {"name": "cd24742df_webdis", "portmappings": [{"Protocol":"tcp","TargetPort":7379,"PublishedPort":30000,"PublishMode":"ingress"}]}]'
+                //steps.sh (script: getFilePath(PRINT_PORTMAPPINGS_FILE) + ' ' + stackName(), returnStdout:true).trim()
+        //steps.echo 'Portmappings: ' + portMappingsJSON
         /*
         Beispiel für portMappingsJSON:
         [{
@@ -107,10 +109,10 @@ class CDMain implements Serializable {
 
         for (def mappingInfo : mappingList) {
 
-            if (mappingInfo.name.equals(fullServiceName(serviceName))) {
+            if (String.valueOf(mappingInfo.name).equals(String.valueOf(fullServiceName(serviceName)))) {
                 for (def mapping : mappingInfo.portmappings) {
 
-                    if (mapping.TargetPort.equals(targetPort)) {
+                    if (String.valueOf(mapping.TargetPort).equals(String.valueOf(targetPort))) {
                         return mapping.PublishedPort
                     }
                 }
@@ -124,11 +126,11 @@ class CDMain implements Serializable {
         steps.sh "./docker ${args}"
     }
 
-    /*public static void main(String... args) {
+    public static void main(String... args) {
         def main = new CDMain(null)
         main.commitId = '24742df'
-        println main.getPublishedPort('newspage', 8081)
-    }*/
+        println main.getPublishedPort('webdis', 7379)
+    }
 
 }
 
