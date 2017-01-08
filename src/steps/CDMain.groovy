@@ -30,7 +30,7 @@ class CDMain implements Serializable {
         copyResource(PRINT_PORTMAPPINGS_FILE, true)
 
 
-        commitId = steps.sh(script: 'git rev-parse --short HEAD', returnStdout:true).trim()
+        commitId = shResult('git rev-parse --short HEAD')
     }
 
     private String copyResource(filename) {
@@ -68,11 +68,13 @@ class CDMain implements Serializable {
         steps.sh './docker stack deploy --compose-file ' + getFilePath(DOCKER_STACK_FILE) + ' ' + stackName()
     }
 
+    private String shResult(String shellCommand){
+        return steps.sh (script: shellCommand, returnStdout:true).trim()
+    }
+
     def getPublishedPort(String serviceName, int targetPort) {
 
-        def portMappingsJSON =
-                //'[{"name": "cd24742df_newspage-mongo", "portmappings": null}, {"name": "cd24742df_newspage", "portmappings": [{"Protocol":"tcp","TargetPort":8081,"PublishedPort":30001,"PublishMode":"ingress"}]}, {"name": "cd24742df_redis", "portmappings": null}, {"name": "cd24742df_webdis", "portmappings": [{"Protocol":"tcp","TargetPort":7379,"PublishedPort":30000,"PublishMode":"ingress"}]}]'
-                steps.sh (script: getFilePath(PRINT_PORTMAPPINGS_FILE) + ' ' + stackName(), returnStdout:true).trim()
+        def portMappingsJSON = shResult(getFilePath(PRINT_PORTMAPPINGS_FILE) + ' ' + stackName())
         //steps.echo 'Portmappings: ' + portMappingsJSON
         /*
         Beispiel für portMappingsJSON:
@@ -106,17 +108,12 @@ class CDMain implements Serializable {
 
 
         def mappingList = new JsonSlurper().parseText(portMappingsJSON)
-        steps.echo String.valueOf(mappingList)
         for (def mappingInfo : mappingList) {
-            steps.echo 'MappingInfo: ' + String.valueOf(mappingInfo)
-            steps.echo String.valueOf('Check: ' + mappingInfo.name + ' == ' + fullServiceName(serviceName))
+
             if (String.valueOf(mappingInfo.name).equals(String.valueOf(fullServiceName(serviceName)))) {
-                steps.echo 'Find1 : ' + String.valueOf(mappingInfo.name)
                 for (def mapping : mappingInfo.portmappings) {
-                    steps.echo 'Mapping' + String.valueOf(mapping)
-                    steps.echo String.valueOf('Check: ' + mapping.TargetPort + ' == ' + targetPort)
+
                     if (String.valueOf(mapping.TargetPort).equals(String.valueOf(targetPort))) {
-                        steps.echo 'Find2: ' + String.valueOf(mapping.TargetPort)
                         return mapping.PublishedPort
                     }
                 }
@@ -130,11 +127,11 @@ class CDMain implements Serializable {
         steps.sh "./docker ${args}"
     }
 
-    public static void main(String... args) {
+    /*public static void main(String... args) {
         def main = new CDMain(null)
         main.commitId = '24742df'
         println main.getPublishedPort('newspage', 8081)
-    }
+    }*/
 
 }
 
