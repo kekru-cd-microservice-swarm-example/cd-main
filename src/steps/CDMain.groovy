@@ -106,13 +106,15 @@ class CDMain implements Serializable {
 
 
         def mappingList = new JsonSlurper().parseText(portMappingsJSON)
-
+        steps.echo mappingList
         for (def mappingInfo : mappingList) {
-
+            steps.echo mappingInfo
             if (String.valueOf(mappingInfo.name).equals(String.valueOf(fullServiceName(serviceName)))) {
+                steps.echo 'Find1 : ' + mappingInfo.name
                 for (def mapping : mappingInfo.portmappings) {
-
+                    steps.echo mapping
                     if (String.valueOf(mapping.TargetPort).equals(String.valueOf(targetPort))) {
+                        steps.echo 'Find2: ' + mapping.TargetPort
                         return mapping.PublishedPort
                     }
                 }
@@ -129,7 +131,7 @@ class CDMain implements Serializable {
     public static void main(String... args) {
         def main = new CDMain(null)
         main.commitId = '24742df'
-        println main.getPublishedPort('webdis', 7379)
+        println main.getPublishedPort('newspage', 8081)
     }
 
 }
