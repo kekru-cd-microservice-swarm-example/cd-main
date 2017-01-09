@@ -58,7 +58,7 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: udp://logstash:12201
+        gelf-address: udp://localhost:12201
     deploy:
       mode: "replicated"
       replicas: 5
@@ -86,7 +86,7 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: udp://logstash:12201    
+        gelf-address: udp://localhost:12201    
     depends_on:
      - webdis
     deploy:
