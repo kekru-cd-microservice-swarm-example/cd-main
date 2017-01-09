@@ -24,56 +24,8 @@ class DockerStack extends AbstractPipelineScript implements Serializable {
 
     }
 
-
     def getPublishedPort(String serviceName, int targetPort) {
-
-        def portMappingsJSON = shResult(getFilePath(CDMain.PRINT_PORTMAPPINGS_FILE) + ' ' + stackName)
-        //steps.echo 'Portmappings: ' + portMappingsJSON
-        /*
-        Beispiel für portMappingsJSON:
-        [{
-            "name": "cd91ff259_redis",
-            "portmappings": null
-        }, {
-            "name": "cd91ff259_newspage",
-            "portmappings": [{
-                    "Protocol": "tcp",
-                    "TargetPort": 8081,
-                    "PublishedPort": 30001,
-                    "PublishMode": "ingress"
-                }
-            ]
-        }, {
-            "name": "cd91ff259_newspage-mongo",
-            "portmappings": null
-        }, {
-            "name": "cd91ff259_webdis",
-            "portmappings": [{
-                    "Protocol": "tcp",
-                    "TargetPort": 7379,
-                    "PublishedPort": 30000,
-                    "PublishMode": "ingress"
-                }
-            ]
-        }]
-
-        */
-
-
-        def mappingList = new JsonSlurperClassic().parseText(portMappingsJSON)
-        for (def mappingInfo : mappingList) {
-
-            if (String.valueOf(mappingInfo.name).equals(String.valueOf(fullServiceName(serviceName)))) {
-                for (def mapping : mappingInfo.portmappings) {
-
-                    if (String.valueOf(mapping.TargetPort).equals(String.valueOf(targetPort))) {
-                        return mapping.PublishedPort
-                    }
-                }
-            }
-        }
-
-        return -1
+        return getPublishedPortOfService('$(./docker stack services -q '+stackName+')', fullServiceName(serviceName), targetPort)
     }
 
     public DockerStack deployStack(){

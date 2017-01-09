@@ -1,5 +1,7 @@
 package steps
 
+import groovy.json.JsonSlurperClassic
+
 /**
  * Created by krummenauer on 08.01.2017.
  */
@@ -40,12 +42,63 @@ abstract class AbstractPipelineScript {
     public final AbstractPipelineScript init() {
         //in init ausgelagert, wegen Bug https://issues.jenkins-ci.org/browse/JENKINS-26313
 
-        steps.sh 'mkdir --parents cd-main'
-
         commitId = shResult('git rev-parse --short HEAD')
 
         initObject()
 
         return this
     }
+
+    protected String getPublishedPortOfService(String fullServiceName, int targetPort){
+        return getPublishedPortOfService(fullServiceName, fullServiceName, targetPort);
+    }
+
+    protected String getPublishedPortOfService(String bashCommandCreatingServiceNames, String fullServiceName, int targetPort){
+        def portMappingJSON = shResult('sed "s|,]|]|g" <<< "["$(docker service inspect --format=\'{"name": {{json .Spec.Name}}, "portmappings": {{json .Endpoint.Ports}}},\' '+bashCommandCreatingServiceNames+')"]"')
+        /*
+        Beispiel für portMappingsJSON:
+        [{
+            "name": "cd91ff259_redis",
+            "portmappings": null
+        }, {
+            "name": "cd91ff259_newspage",
+            "portmappings": [{
+                    "Protocol": "tcp",
+                    "TargetPort": 8081,
+                    "PublishedPort": 30001,
+                    "PublishMode": "ingress"
+                }
+            ]
+        }, {
+            "name": "cd91ff259_newspage-mongo",
+            "portmappings": null
+        }, {
+            "name": "cd91ff259_webdis",
+            "portmappings": [{
+                    "Protocol": "tcp",
+                    "TargetPort": 7379,
+                    "PublishedPort": 30000,
+                    "PublishMode": "ingress"
+                }
+            ]
+        }]
+
+        */
+
+        def mappingList = new JsonSlurperClassic().parseText(portMappingJSON)
+        for (def mappingInfo : mappingList) {
+
+            if (String.valueOf(mappingInfo.name).equals(String.valueOf(fullServiceName))) {
+                for (def mapping : mappingInfo.portmappings) {
+
+                    if (String.valueOf(mapping.TargetPort).equals(String.valueOf(targetPort))) {
+                        return mapping.PublishedPort
+                    }
+                }
+            }
+        }
+
+        return -1
+    }
+
 }

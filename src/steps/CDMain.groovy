@@ -6,7 +6,6 @@ class CDMain extends AbstractPipelineScript implements Serializable {
 
     public static final String DOCKER_STACK_FILE = 'base-setup.stack.yml'
     public static final String SETUP_DOCKERCLIENT_FILE = 'setup-dockerclient'
-    public static final String PRINT_PORTMAPPINGS_FILE = 'print-service-portmappings'
 
 
     CDMain(steps) {
@@ -15,13 +14,13 @@ class CDMain extends AbstractPipelineScript implements Serializable {
 
     @Override
     protected void initObject() {
+        steps.sh 'mkdir --parents cd-main'
+
         //Docker Client herunterladen
         steps.sh(copyResource(SETUP_DOCKERCLIENT_FILE, true))
 
         //Docker-Compose File in Workspace kopieren, um daraus einen Docker Stack generieren zu können, zum Aufsetzen einer Testumgebung
         copyResource(DOCKER_STACK_FILE)
-
-        copyResource(PRINT_PORTMAPPINGS_FILE, true)
     }
 
 
