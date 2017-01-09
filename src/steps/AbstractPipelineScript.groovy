@@ -49,11 +49,11 @@ abstract class AbstractPipelineScript {
         return this
     }
 
-    protected String getPublishedPortOfService(String fullServiceName, int targetPort){
+    public final String getPublishedPortOfService(String fullServiceName, int targetPort){
         return getPublishedPortOfService(fullServiceName, fullServiceName, targetPort);
     }
 
-    protected String getPublishedPortOfService(String bashCommandCreatingServiceNames, String fullServiceName, int targetPort){
+    public final String getPublishedPortOfService(String bashCommandCreatingServiceNames, String fullServiceName, int targetPort){
         def portMappingJSON = shResult('sed "s|,]|]|g" <<< "["$(docker service inspect --format=\'{"name": {{json .Spec.Name}}, "portmappings": {{json .Endpoint.Ports}}},\' '+bashCommandCreatingServiceNames+')"]"')
         /*
         Beispiel für portMappingsJSON:
