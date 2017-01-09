@@ -91,5 +91,8 @@ class DockerStack extends AbstractPipelineScript implements Serializable {
         return stackName + '_' + serviceName
     }
 
+    def getNetworkName(){
+        return stackName + '_default'
+    }
 
 }
