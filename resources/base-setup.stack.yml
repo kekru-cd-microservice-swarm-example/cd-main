@@ -38,8 +38,8 @@ services:
           codec => rubydebug
         }
       }'
-    #ports:
-    #  - "12201:12201/udp"
+    ports:
+      - "12201:12201/udp"
 
   kibana:
     image: kibana:4
