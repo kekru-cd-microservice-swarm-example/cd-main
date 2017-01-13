@@ -21,7 +21,6 @@ class CDMain extends AbstractPipelineScript implements Serializable {
 
         //Docker-Compose File in Workspace kopieren, um daraus einen Docker Stack generieren zu können, zum Aufsetzen einer Testumgebung
         copyResource(DOCKER_STACK_FILE)
-        copyResource('wait-network')
     }
 
 

@@ -1,18 +1,18 @@
-#!/bin/bash
+#!/bin/sh
 COUNTER=1
-TIMEOUTSECONDS=60
+TIMEOUTSECONDS=120
 MAX=$(($TIMEOUTSECONDS/3))
 
-while ! $(echo exit | nc "$1" "$2")
+while ! $(nc -z "$1" "$2")
 do
    echo "Wait for $1 Port $2, try $COUNTER of $MAX"
    sleep 3
    COUNTER=$(($COUNTER+1))
    if [[ $COUNTER -gt $MAX ]]; then
       echo "ERROR: Not ready $1 $2" 1>&2
-      exit 1
+      exit 1 
    fi
-
+   
 done
 
 echo "Connection ready $1 $2"
