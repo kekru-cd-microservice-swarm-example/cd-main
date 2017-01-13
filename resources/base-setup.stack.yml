@@ -93,7 +93,7 @@ services:
      - webdis
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
 
 networks:
   default: #Name des network ist default
