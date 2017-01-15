@@ -40,22 +40,22 @@ Vagrant.configure(2) do |config|
 	
 	#Registry starten
 	machine.vm.provision "shell", inline: "sudo mkdir --parents /data/registry"
-	machine.vm.provision "shell", inline: "docker run --name registry -d -p 5000:5000 -v /data/registry:/var/lib/registry registry"
+	machine.vm.provision "shell", inline: "docker run --name registry --restart unless-stopped -d -p 5000:5000 -v /data/registry:/var/lib/registry registry"
 	
 	#Jenkins starten
 	machine.vm.provision "shell", inline: "sudo mkdir --parents /data/jenkins"
 	machine.vm.provision "shell", inline: "sudo chmod 777 /data/jenkins"
 	machine.vm.provision "shell", inline: "docker build -t myjenkins /vagrant/jenkins" 
-	machine.vm.provision "shell", inline: "docker run --name jenkins -d -p 8080:8080 -p 8079:50000 -v /data/jenkins:/var/jenkins_home myjenkins"
+	machine.vm.provision "shell", inline: "docker run --name jenkins --restart unless-stopped -d -p 8080:8080 -p 8079:50000 -v /data/jenkins:/var/jenkins_home myjenkins"
 	
 	#Swarm Visualizer starten
 	machine.vm.provision "shell", inline: "sudo chmod 666 /var/run/docker.sock"
-	machine.vm.provision "shell", inline: "docker run --name swarmvisualizer -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
+	machine.vm.provision "shell", inline: "docker run --name swarmvisualizer --restart unless-stopped -d -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock:ro manomarks/visualizer"
 	
 	#Docker Remote API nach außen verfuegbar machen (ungesichert)
-	machine.vm.provision "shell", inline: "docker run --name remoteapi -d -p 2375:2375 -v /var/run/docker.sock:/var/run/docker.sock:ro jarkt/docker-remote-api"
+	machine.vm.provision "shell", inline: "docker run --name remoteapi --restart unless-stopped -d -p 2375:2375 -v /var/run/docker.sock:/var/run/docker.sock:ro jarkt/docker-remote-api"
 	
-	#wait-Image erstellen
+	#wait-Image erstellen, wird in den Jenkinsfiles genutzt
 	machine.vm.provision "shell", inline: "docker build -t wait /vagrant/waitnetwork" 
   end
 
