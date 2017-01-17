@@ -94,11 +94,39 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      
+  borderproxy:
+    image: "manager1:5000/cd/borderproxy:2"
+    ports:
+     - "80:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  commentsservice:
+    image: "manager1:5000/cd/commentsservice:2"
+    ports:
+     - "0:8080"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  commentsservice-mongo:
+    image: "mongo"
+    ports:
+     - "0:27017"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://localhost:12201
+    deploy:
+      mode: replicated
+      replicas: 1
 
 networks:
   default: #Name des network ist default
     driver: overlay
-    #ipam:
-    #  driver: default
+    ipam:
+      driver: default
     #  config:
     #   - subnet: 192.168.70.0/24
