@@ -98,7 +98,7 @@ services:
 networks:
   default: #Name des network ist default
     driver: overlay
-    ipam:
-      driver: default
-      config:
-       - subnet: 192.168.70.0/24
+    #ipam:
+    #  driver: default
+    #  config:
+    #   - subnet: 192.168.70.0/24
