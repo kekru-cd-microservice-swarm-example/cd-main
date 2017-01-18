@@ -82,7 +82,7 @@ services:
         max_failure_ratio: 0.5
 
   newspage-mongo:
-    image: "manager1:5000/cd/newspage-mongo:2"
+    image: "mongo" #"manager1:5000/cd/newspage-mongo:2"
     ports: 
      - "0:27017"
     logging:
