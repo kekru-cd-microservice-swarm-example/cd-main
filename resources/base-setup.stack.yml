@@ -52,7 +52,7 @@ services:
 # -----------------------------------------------------------------------------------
 # Start Newspage      
   newspage:
-    image: "manager1:5000/cd/newspage:2"
+    image: "manager1:5000/cd/newspage:11233c7"
     ports: 
      - "0:8081"
     logging:
