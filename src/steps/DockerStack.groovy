@@ -30,7 +30,11 @@ class DockerStack extends AbstractPipelineScript implements Serializable {
 
     public DockerStack deployStack(){
         stackName = 'cd' + commitId + nameExtension
-        steps.sh './docker stack deploy --compose-file ' + getFilePath(CDMain.DOCKER_STACK_FILE) + ' ' + stackName
+        def stackFile = getFilePath(CDMain.DOCKER_STACK_FILE)
+        steps.sh 'sed -i "s|test_default|'+stackName+'_default|g" ' + stackFile
+        steps.echo 'Deploy Stack'
+        steps.echo 'cat ' + stackFile
+        steps.sh './docker stack deploy --compose-file ' + stackFile + ' ' + stackName
         return this
     }
 
