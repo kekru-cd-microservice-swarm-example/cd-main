@@ -52,9 +52,9 @@ services:
 # -----------------------------------------------------------------------------------
 # Start Newspage      
   newspage:
-    image: "manager1:5000/cd/newspage:11233c7"
+    image: "manager1:5000/newspage:50"
     ports: 
-     - "0:8081"
+     - "9000:8081"
     logging:
       driver: gelf
       options:
@@ -62,6 +62,10 @@ services:
     deploy:
       mode: "replicated"
       replicas: 5
+      labels:
+       - "traefik.frontend.rule=PathPrefixStrip:/newspage"
+       - "traefik.port=8081"
+       - "traefik.docker.network=test_default"
       resources:
         limits:
           cpus: "0.25"
@@ -84,7 +88,7 @@ services:
   newspage-mongo:
     image: "mongo" #"manager1:5000/cd/newspage-mongo:2"
     ports: 
-     - "0:27017"
+     - "9001:27017"
     logging:
       driver: gelf
       options:
@@ -94,27 +98,50 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      
-  borderproxy:
-    image: "manager1:5000/cd/borderproxy:2"
+
+  traefik:
+    image: "traefik"
     ports:
-     - "80:80"
+     - "8084:80"
+     - "8085:8080"
+    volumes:
+     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    command: "--docker --docker.swarmmode --docker.domain=traefik --docker.watch --web"
+    deploy:
+      mode: "replicated"
+      replicas: 1
+      placement:
+        constraints:
+         - "node.role==manager"
+
+  whoami:
+    image: "emilevauge/whoami"
+    ports:
+     - "0:80"
     deploy:
       mode: replicated
       replicas: 1
+      labels:
+       - "traefik.frontend.rule=PathPrefixStrip:/abcd"
+       - "traefik.port=80"
+       - "traefik.docker.network=test_default"
 
   commentsservice:
     image: "manager1:5000/cd/commentsservice:2"
     ports:
-     - "0:8080"
+     - "9002:8080"
     deploy:
       mode: replicated
       replicas: 1
+      labels:
+       - "traefik.frontend.rule=PathPrefixStrip:/commentsservice"
+       - "traefik.port=8080"
+       - "traefik.docker.network=test_default"
 
   commentsservice-mongo:
     image: "mongo"
     ports:
-     - "0:27017"
+     - "9003:27017"
     logging:
       driver: gelf
       options:
