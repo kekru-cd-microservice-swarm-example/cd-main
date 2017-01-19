@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ ! -f cd-main/docker-client/docker/docker ]; then
+   mkdir --parents cd-main/docker-client
+   curl https://test.docker.com/builds/Linux/i386/docker-latest.tgz | tar xvz --directory cd-main/docker-client
+fi
+
+PWD=$(pwd)
+echo -e "#!/bin/sh\n$PWD/cd-main/docker-client/docker/docker --tlsverify -H=prodmanager1:2376 \
+   --tlscacert=/vagrant/vm-data/certs-prod/ca-cert.pem \
+   --tlscert=/vagrant/vm-data/certs-prod/client-cert.pem \
+   --tlskey=/vagrant/vm-data/certs-prod/client-key.pem \
+   "'"$@"' > dockerprod
+   
+chmod +x dockerprod
+./dockerprod version
