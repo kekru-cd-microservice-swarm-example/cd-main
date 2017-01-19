@@ -41,12 +41,39 @@ class CDMain extends AbstractPipelineScript implements Serializable {
     }
 
 
-    def buildAndPush(String serviceName, String pathDockerfile = '.') {
+    public String buildAndPush(String serviceName, String pathDockerfile = '.') {
         def fullImageName = 'manager1:5000/cd/'+serviceName+':'+commitId
 
         steps.echo 'Build and Push ' + fullImageName
         steps.sh './docker build -t ' + fullImageName + ' ' + pathDockerfile
         steps.sh './docker push ' + fullImageName
+
+        return fullImageName
+    }
+
+    private String extractImageTag(String imageName){
+        if(!imageName.contains(':')){
+            return "latest"
+        }
+
+        return imageName.substring(imageName.indexOf(':'))
+    }
+
+    def waitForTCP(int port){
+        steps.sh './docker run --rm wait 10.1.6.210 '+port
+    }
+
+    def deployInProduction(String fullServiceName, String fullImageName) {
+        //TODO Deploy in Production
+
+        def simpleServiceName = fullServiceName
+        if(simpleServiceName.contains("_")){
+            simpleServiceName = simpleServiceName.substring(0, simpleServiceName.indexOf("_"))
+        }
+
+        def imageTag = extractImageTag(fullImageName)
+        //Versionsbezeichner (= ImageTag) in Redis speichern
+        steps.sh 'echo "' + imageTag + '" | ./redi.sh -s ' + simpleServiceName + '-version'
     }
 
 
