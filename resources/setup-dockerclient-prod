@@ -1,16 +1,26 @@
 #!/bin/bash
 
+
 if [ ! -f cd-main/docker-client/docker/docker ]; then
    mkdir --parents cd-main/docker-client
    curl https://test.docker.com/builds/Linux/i386/docker-latest.tgz | tar xvz --directory cd-main/docker-client
 fi
 
 PWD=$(pwd)
-echo -e "#!/bin/sh\n$PWD/cd-main/docker-client/docker/docker --tlsverify -H=prodmanager1:2376 \
+echo -e "#!/bin/bash \n \
+   CLIENTKEYPATH=\$1 \n \
+   if [[ -z \$CLIENTKEYPATH ]]; then \n \
+      echo \"no path to client-key.pem as first parameter\" \n \
+      exit 1 \n \
+   fi \n \
+   $PWD/cd-main/docker-client/docker/docker \
+   --tlsverify \
+   -H=prodmanager1:2376 \
    --tlscacert=/vagrant/vm-data/certs-prod/ca-cert.pem \
    --tlscert=/vagrant/vm-data/certs-prod/client-cert.pem \
-   --tlskey=/vagrant/vm-data/certs-prod/client-key.pem \
-   "'"$@"' > dockerprod
-   
+   --tlskey=\$CLIENTKEYPATH \
+   "'"${@:2}"' > dockerprod
+
 chmod +x dockerprod
-./dockerprod version
+
+echo "usage ./dockerprod /path/to/client-key.pem ps"
