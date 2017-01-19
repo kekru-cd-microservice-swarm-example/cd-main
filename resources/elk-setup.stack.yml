@@ -29,7 +29,7 @@ services:
      - "12201:12201/udp"
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 3
 
   elasticsearch:
     image: elasticsearch:2
