@@ -41,11 +41,11 @@ class CDMain extends AbstractPipelineScript implements Serializable {
     }
 
 
-    def buildAndPush(String serviceName) {
+    def buildAndPush(String serviceName, String pathDockerfile = '.') {
         def fullImageName = 'manager1:5000/cd/'+serviceName+':'+commitId
 
         steps.echo 'Build and Push ' + fullImageName
-        steps.sh './docker build -t ' + fullImageName + ' .'
+        steps.sh './docker build -t ' + fullImageName + ' ' + pathDockerfile
         steps.sh './docker push ' + fullImageName
     }
 
