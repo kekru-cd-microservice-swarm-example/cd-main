@@ -52,8 +52,8 @@ services:
 # -----------------------------------------------------------------------------------
 # Start Newspage      
   newspage:
-    image: "manager1:5000/newspage:50"
-    ports: 
+    image: "manager1:5000/cd/newspage:!!NEWSPAGE_VERSION!!"
+    ports:
      - "9000:8081"
     logging:
       driver: gelf
@@ -65,7 +65,7 @@ services:
       labels:
        - "traefik.frontend.rule=PathPrefixStrip:/newspage"
        - "traefik.port=8081"
-       - "traefik.docker.network=test_default"
+       - "traefik.docker.network=!!TRAEFIK_NETWORK_NAME!!"
       resources:
         limits:
           cpus: "0.25"
@@ -87,12 +87,12 @@ services:
 
   newspage-mongo:
     image: "mongo" #"manager1:5000/cd/newspage-mongo:2"
-    ports: 
+    ports:
      - "9001:27017"
     logging:
       driver: gelf
       options:
-        gelf-address: udp://localhost:12201    
+        gelf-address: udp://localhost:12201
     depends_on:
      - webdis
     deploy:
@@ -124,10 +124,10 @@ services:
       labels:
        - "traefik.frontend.rule=PathPrefixStrip:/abcd"
        - "traefik.port=80"
-       - "traefik.docker.network=test_default"
+       - "traefik.docker.network=!!TRAEFIK_NETWORK_NAME!!"
 
   commentsservice:
-    image: "manager1:5000/cd/commentsservice:2"
+    image: "manager1:5000/cd/commentsservice:!!COMMENTSSERVICE_VERSION!!"
     ports:
      - "9002:8080"
     deploy:
@@ -136,7 +136,7 @@ services:
       labels:
        - "traefik.frontend.rule=PathPrefixStrip:/commentsservice"
        - "traefik.port=8080"
-       - "traefik.docker.network=test_default"
+       - "traefik.docker.network=!!TRAEFIK_NETWORK_NAME!!"
 
   commentsservice-mongo:
     image: "mongo"

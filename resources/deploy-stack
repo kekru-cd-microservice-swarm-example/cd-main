@@ -1,0 +1,32 @@
+#!/bin/bash
+
+STACKFILE=$1
+STACKFILETARGET=$STACKFILE"-deployable.yml"
+STACKNAME=$2
+
+if [[ -z $STACKFILE ]]; then
+   echo "no stackfile as first parameter"
+   exit 1
+fi
+
+if [[ -z $STACKNAME ]]; then
+   echo "no stackname as second parameter"
+   exit 1
+fi
+
+cp $STACKFILE $STACKFILETARGET
+
+#Stackname einfuegen fuer Traefik
+sed -i "s|!!TRAEFIK_NETWORK_NAME!!|"$STACKNAME"_default|g" $STACKFILETARGET
+
+#Aktuelle Versionen der Microservices in das Stackfile eintragen
+#Die Versionsbezeichner kommen aus der Redis
+sed -i "s|!!NEWSPAGE_VERSION!!|$(./redi.sh -g newspage-version)|g" $STACKFILETARGET
+sed -i "s|!!COMMENTSSERVICE_VERSION!!|$(./redi.sh -g commentsservice-version)|g" $STACKFILETARGET
+
+echo "Deploy Stack $STACKNAME"
+cat $STACKFILETARGET
+
+./docker stack deploy --compose-file $STACKFILETARGET $STACKNAME
+
+rm $STACKFILETARGET
