@@ -80,7 +80,7 @@ services:
         window: 60s
       update_config:
         parallelism: 1
-        delay: 20s
+        delay: 2s
         failure_action: continue
         monitor: 60s
         max_failure_ratio: 0.5
