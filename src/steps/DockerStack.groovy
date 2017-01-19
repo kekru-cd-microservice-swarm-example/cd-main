@@ -40,6 +40,9 @@ class DockerStack extends AbstractPipelineScript implements Serializable {
         return this
     }
 
+    def getBorderproxyPort() {
+        return getPublishedPort('traefik', 80)
+    }
 
     def fullServiceName(serviceName) {
         if (serviceName.startsWith(stackName + '_')) {
