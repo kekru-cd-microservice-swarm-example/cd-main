@@ -56,7 +56,7 @@ class CDMain extends AbstractPipelineScript implements Serializable {
             return "latest"
         }
 
-        return imageName.substring(imageName.indexOf(':'))
+        return imageName.substring(imageName.lastIndexOf(':'))
     }
 
     def waitForTCP(int port){
