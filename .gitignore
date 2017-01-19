@@ -1,6 +1,7 @@
 .vagrant
 swarmtokens
 
+.gradle
 target/
 !.mvn/wrapper/maven-wrapper.jar
 

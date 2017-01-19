@@ -1,0 +1,24 @@
+// groovy
+
+apply plugin: 'groovy'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// deps
+
+repositories {
+    jcenter()
+}
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.8'
+
+    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+    }
+}
+
+// source layout
+
+sourceSets.main.groovy.srcDirs = ['src']
+sourceSets.test.groovy.srcDirs = ['test']

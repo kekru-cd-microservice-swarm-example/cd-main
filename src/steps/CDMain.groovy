@@ -51,12 +51,16 @@ class CDMain extends AbstractPipelineScript implements Serializable {
         return fullImageName
     }
 
-    private String extractImageTag(String imageName){
+    def extractImageTag(String imageName){
+        if(imageName.contains('/')){
+            imageName = imageName.substring(imageName.lastIndexOf('/'))
+        }
+
         if(!imageName.contains(':')){
             return "latest"
         }
 
-        return imageName.substring(imageName.lastIndexOf(':'))
+        return imageName.substring(imageName.lastIndexOf(':') +1)
     }
 
     def waitForTCP(int port){
