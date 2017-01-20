@@ -72,37 +72,42 @@ class CDMain extends AbstractPipelineScript implements Serializable {
     }
 
     def deployInProduction(String fullServiceName, String fullImageName) {
-        //TODO Deploy in Production
 
         def simpleServiceName = fullServiceName
         if(simpleServiceName.contains("_")){
             simpleServiceName = simpleServiceName.substring(0, simpleServiceName.indexOf("_"))
         }
 
+        dockerProd('service update --image ' + fullImageName + ' prod_' + simpleServiceName)
+
         def imageTag = extractImageTag(fullImageName)
         //Versionsbezeichner (= ImageTag) in Redis speichern
         steps.sh 'echo "' + imageTag + '" | ./redi.sh -s ' + simpleServiceName + '-version'
     }
 
-
+    /**
+     * Führt ein Docker Kommando auf dem Manager des Produktiv Swarms aus
+     * @param args
+     * @return
+     */
     def dockerProd(String args) {
+        if(args.startsWith('docker')){
+            args = args.substring('docker'.length())
+        }
+
         steps.withCredentials(
                 [steps.file(credentialsId: 'prod-client-key', variable: 'CLIENTKEY'),
                  steps.file(credentialsId: 'client-cert', variable: 'CLIENTCERT'),
                  steps.file(credentialsId: 'ca-cert', variable: 'CACERT')]) {
 
-            steps.sh 'cat $CLIENTKEY'
-            steps.sh 'cat $CLIENTCERT'
-            steps.sh 'cat $CACERT'
-
             steps.sh 'getent hosts prodmanager1'
             steps.sh './cd-main/docker-client/docker/docker' +
-                    ' --tlsverify' +
-                    ' -H=prodmanager1:2376' +
-                    ' --tlscacert=$CACERT' +
-                    ' --tlscert=$CLIENTCERT' +
-                    ' --tlskey=$CLIENTKEY ' +
-                   args
+                     ' --tlsverify' +
+                     ' -H=prodmanager1:2376' +
+                     ' --tlscacert=$CACERT' +
+                     ' --tlscert=$CLIENTCERT' +
+                     ' --tlskey=$CLIENTKEY ' +
+                     args
         }
     }
 
