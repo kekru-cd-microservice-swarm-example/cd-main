@@ -85,6 +85,23 @@ class CDMain extends AbstractPipelineScript implements Serializable {
     }
 
 
+    def dockerProd(String args) {
+        steps.withCredentials(
+                [steps.file(credentialsId: 'prod-client-key', variable: 'CLIENTKEY'),
+                 steps.file(credentialsId: 'client-cert', variable: 'CLIENTCERT'),
+                 steps.file(credentialsId: 'ca-cert', variable: 'CACERT')]) {
+
+            steps.sh './cd-main/docker-client/docker/docker' +
+                    ' --tlsverify' +
+                    ' -H=prodmanager1:2376' +
+                    ' --tlscacert=$CACERT' +
+                    ' --tlscert=$CLIENTCERT' +
+                    ' --tlskey=$CLIENTKEY' +
+                    args
+
+        }
+    }
+
 
     def docker(args) {
         steps.sh "./docker ${args}"
