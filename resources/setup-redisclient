@@ -4,6 +4,6 @@ if [ ! -f cd-main/redi.sh ]; then
    curl https://raw.githubusercontent.com/crypt1d/redi.sh/master/redi.sh -o cd-main/redi.sh
 fi
 
-echo -e "#!/bin/sh\n$PWD/cd-main/redi.sh -H 10.1.6.210 -P 6379 "'"$@"' > redi.sh
+echo -e "#!/bin/sh\n$PWD/cd-main/redi.sh -H manager1 -P 6379 "'"$@"' > redi.sh
 chmod +x cd-main/redi.sh
 chmod +x redi.sh
