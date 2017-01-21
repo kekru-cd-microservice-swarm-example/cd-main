@@ -6,7 +6,6 @@ class CDMain extends AbstractPipelineScript implements Serializable {
 
     public static final String DOCKER_STACK_FILE = 'base-setup.stack.yml'
     public static final String SETUP_DOCKERCLIENT_FILE = 'setup-dockerclient'
-    public static final String SETUP_DOCKERCLIENT_PROD_FILE = 'setup-dockerclient-prod'
     public static final String SETUP_REDISCLIENT_FILE = 'setup-redisclient'
     public static final String STACK_DEPLOY_SCRIPT = 'deploy-stack'
 
@@ -21,9 +20,6 @@ class CDMain extends AbstractPipelineScript implements Serializable {
 
         //Docker Client herunterladen und für Testumgebung einrichten
         steps.sh(copyResource(SETUP_DOCKERCLIENT_FILE, true))
-
-        //Docker Client für Produktiv-Umgebung einrichten
-        steps.sh(copyResource(SETUP_DOCKERCLIENT_PROD_FILE, true))
 
         //Redis Client herunterladen: Bashclient "redi.sh"
         steps.sh(copyResource(SETUP_REDISCLIENT_FILE, true))
