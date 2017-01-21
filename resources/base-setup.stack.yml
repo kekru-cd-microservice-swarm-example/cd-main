@@ -16,7 +16,7 @@ services:
      - "0:8080"
     volumes:
      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    command: "--docker --docker.swarmmode --docker.domain=traefik --docker.watch --docker.constraints=tag==!!TRAEFIK_NETWORK_NAME!! --web"
+    command: "--docker --docker.swarmmode --docker.domain=traefik --docker.watch --docker.constraints=tag==!!TRAEFIK_TAG!! --web"
     logging:
       driver: gelf
       options:
@@ -39,7 +39,7 @@ services:
        - "traefik.frontend.rule=PathPrefixStrip:/abcd"
        - "traefik.port=80"
        - "traefik.docker.network=!!TRAEFIK_NETWORK_NAME!!"
-       - "traefik.tags=!!TRAEFIK_NETWORK_NAME!!"
+       - "traefik.tags=!!TRAEFIK_TAG!!"
       
 
   #Der Newspage-Service
@@ -58,7 +58,7 @@ services:
        - "traefik.frontend.rule=PathPrefixStrip:/newspage"
        - "traefik.port=8081"
        - "traefik.docker.network=!!TRAEFIK_NETWORK_NAME!!"
-       - "traefik.tags=!!TRAEFIK_NETWORK_NAME!!"
+       - "traefik.tags=!!TRAEFIK_TAG!!"
       resources:
         limits:
           cpus: "0.25"
@@ -106,7 +106,7 @@ services:
        - "traefik.frontend.rule=PathPrefixStrip:/commentsservice"
        - "traefik.port=8080"
        - "traefik.docker.network=!!TRAEFIK_NETWORK_NAME!!"
-       - "traefik.tags=!!TRAEFIK_NETWORK_NAME!!"
+       - "traefik.tags=!!TRAEFIK_TAG!!"
 
   #Mongo DB für den Commentsservice
   commentsservice-mongo:

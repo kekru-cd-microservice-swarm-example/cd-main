@@ -32,7 +32,8 @@ fi
 cp $STACKFILE $STACKFILETARGET
 
 #Stackname einfuegen fuer Traefik
-sed -i "s|!!TRAEFIK_NETWORK_NAME!!|"$STACKNAME"_default|g" $STACKFILETARGET
+sed -i "s|!!TRAEFIK_NETWORK_NAME!!|$STACKNAME'_default'|g" $STACKFILETARGET
+sed -i "s|!!TRAEFIK_TAG!!|$STACKNAME|g" $STACKFILETARGET
 
 #Aktuelle Versionen der Microservices in das Stackfile eintragen
 #Die Versionsbezeichner kommen aus der Redis
