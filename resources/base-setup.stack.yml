@@ -11,14 +11,15 @@ services:
   traefik:
     image: "traefik"
     ports:
-     - "0:80"
+     - "!!TRAEFIK_PORT_80!!:80"
+     - "!!TRAEFIK_PORT_443!!:443"
      - "0:8080"
     volumes:
      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     command: "--docker --docker.swarmmode --docker.domain=traefik --docker.watch --web"
     deploy:
       mode: "replicated"
-      replicas: 1
+      replicas: 2
       placement:
         constraints:
          - "node.role==manager"

@@ -3,6 +3,7 @@
 STACKFILE=$1
 STACKFILETARGET=$STACKFILE"-deployable.yml"
 STACKNAME=$2
+TARGETMODE=$3
 
 if [[ -z $STACKFILE ]]; then
    echo "no stackfile as first parameter"
@@ -14,6 +15,20 @@ if [[ -z $STACKNAME ]]; then
    exit 1
 fi
 
+TRAEFIK80=0
+TRAEFIK443=0
+NEWSPAGEVERSION=$(./redi.sh -g newspage-version)
+NEWSPAGEMONGOVERSION=$(./redi.sh -g newspage-mongo-version)
+COMMENTSSERVICEVERSION=$(./redi.sh -g commentsservice-version)
+
+if [ $TARGETMODE == "initial" ]; then
+   TRAEFIK80="80"
+   TRAEFIK443="443"
+   NEWSPAGEVERSION="0"
+   NEWSPAGEMONGOVERSION="0"
+   COMMENTSSERVICEVERSION="0"
+fi
+
 cp $STACKFILE $STACKFILETARGET
 
 #Stackname einfuegen fuer Traefik
@@ -21,8 +36,11 @@ sed -i "s|!!TRAEFIK_NETWORK_NAME!!|"$STACKNAME"_default|g" $STACKFILETARGET
 
 #Aktuelle Versionen der Microservices in das Stackfile eintragen
 #Die Versionsbezeichner kommen aus der Redis
-sed -i "s|!!NEWSPAGE_VERSION!!|$(./redi.sh -g newspage-version)|g" $STACKFILETARGET
-sed -i "s|!!COMMENTSSERVICE_VERSION!!|$(./redi.sh -g commentsservice-version)|g" $STACKFILETARGET
+sed -i "s|!!TRAEFIK_PORT_80!!|$TRAEFIK80|g" $STACKFILETARGET
+sed -i "s|!!TRAEFIK_PORT_443!!|$TRAEFIK443|g" $STACKFILETARGET
+sed -i "s|!!NEWSPAGE_VERSION!!|$NEWSPAGEVERSION|g" $STACKFILETARGET
+sed -i "s|!!NEWSPAGE_MONGO_VERSION!!|$NEWSPAGEMONGOVERSION|g" $STACKFILETARGET
+sed -i "s|!!COMMENTSSERVICE_VERSION!!|$COMMENTSSERVICEVERSION|g" $STACKFILETARGET
 
 echo "Deploy Stack $STACKNAME"
 cat $STACKFILETARGET
