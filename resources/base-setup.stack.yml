@@ -1,15 +1,46 @@
 #https://github.com/aanand/compose-file/blob/master/schema/data/config_schema_v3.0.json
 version: '3' #http://blog.terranillius.com/post/composev3_swarm/
 services:
+  #Redis Key-Value Store
+  #Die Instanzen der newspage-mongo speichern hier, welche Instanz die Primary-Mongo ist
   redis:
     image: "redis:alpine"
+
+  #Borderproxy, Reverseproxy
+  #Leitet Anfragen, anhand des abgefragten Path an die Services weiter
+  traefik:
+    image: "traefik"
+    ports:
+     - "0:80"
+     - "0:8080"
+    volumes:
+     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    command: "--docker --docker.swarmmode --docker.domain=traefik --docker.watch --web"
+    deploy:
+      mode: "replicated"
+      replicas: 1
+      placement:
+        constraints:
+         - "node.role==manager"
+
+  whoami:
+    image: "emilevauge/whoami"
+    ports:
+     - "0:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+       - "traefik.frontend.rule=PathPrefixStrip:/abcd"
+       - "traefik.port=80"
+       - "traefik.docker.network=!!TRAEFIK_NETWORK_NAME!!"
       
-# -----------------------------------------------------------------------------------
-# Start Newspage      
+
+  #Der Newspage-Service
   newspage:
     image: "manager1:5000/cd/newspage:!!NEWSPAGE_VERSION!!"
     ports:
-     - "9000:8081"
+     - "0:8081"
     logging:
       driver: gelf
       options:
@@ -40,51 +71,27 @@ services:
         monitor: 60s
         max_failure_ratio: 0.5
 
+  #Cluster aus Mongo DBs für den Newspage-Service
   newspage-mongo:
-    image: "manager1:5000/mongotest:100" #"mongo" #"manager1:5000/cd/newspage-mongo:2"
+    image: "manager1:5000/cd/newspage-mongo:!!NEWSPAGE_MONGO_VERSION!!"
     ports:
-     - "9001:27017"
-    #logging:
-    #  driver: gelf
-    #  options:
-    #    gelf-address: udp://localhost:12201
+     - "0:27017"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://localhost:12201
     depends_on:
      - redis
     deploy:
       mode: replicated
-      replicas: 5
-
-  traefik:
-    image: "traefik"
-    ports:
-     - "8084:80"
-     - "8085:8080"
-    volumes:
-     - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    command: "--docker --docker.swarmmode --docker.domain=traefik --docker.watch --web"
-    deploy:
-      mode: "replicated"
       replicas: 1
-      placement:
-        constraints:
-         - "node.role==manager"
 
-  whoami:
-    image: "emilevauge/whoami"
-    ports:
-     - "0:80"
-    deploy:
-      mode: replicated
-      replicas: 1
-      labels:
-       - "traefik.frontend.rule=PathPrefixStrip:/abcd"
-       - "traefik.port=80"
-       - "traefik.docker.network=!!TRAEFIK_NETWORK_NAME!!"
 
+  #Commentsservice
   commentsservice:
     image: "manager1:5000/cd/commentsservice:!!COMMENTSSERVICE_VERSION!!"
     ports:
-     - "9002:8080"
+     - "0:8080"
     deploy:
       mode: replicated
       replicas: 1
@@ -93,10 +100,11 @@ services:
        - "traefik.port=8080"
        - "traefik.docker.network=!!TRAEFIK_NETWORK_NAME!!"
 
+  #Mongo DB für den Commentsservice
   commentsservice-mongo:
     image: "mongo"
     ports:
-     - "9003:27017"
+     - "0:27017"
     logging:
       driver: gelf
       options:
@@ -105,6 +113,7 @@ services:
       mode: replicated
       replicas: 1
 
+#Es wird ein Overlay-Network erstellt, indem alle Container laufen
 networks:
   default: #Name des network ist default
     driver: overlay
