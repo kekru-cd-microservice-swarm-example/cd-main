@@ -72,7 +72,7 @@ services:
         monitor: 60s
         max_failure_ratio: 0.5
 
-  #Cluster aus Mongo DBs für den Newspage-Service
+  #Cluster aus Mongo DBs fÃ¼r den Newspage-Service
   newspage-mongo:
     image: "manager1:5000/cd/newspage-mongo:!!NEWSPAGE_MONGO_VERSION!!"
     ports:
@@ -101,7 +101,7 @@ services:
        - "traefik.port=8080"
        - "traefik.docker.network=!!TRAEFIK_NETWORK_NAME!!"
 
-  #Mongo DB für den Commentsservice
+  #Mongo DB fÃ¼r den Commentsservice
   commentsservice-mongo:
     image: "mongo"
     ports:
