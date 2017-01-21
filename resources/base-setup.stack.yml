@@ -3,12 +3,6 @@ version: '3' #http://blog.terranillius.com/post/composev3_swarm/
 services:
   redis:
     image: "redis:alpine"
-  webdis:
-    image: "anapsix/webdis"
-    ports:
-     - "0:7379"
-    depends_on:
-     - redis
       
 # -----------------------------------------------------------------------------------
 # Start Newspage      
@@ -47,18 +41,18 @@ services:
         max_failure_ratio: 0.5
 
   newspage-mongo:
-    image: "mongo" #"manager1:5000/cd/newspage-mongo:2"
+    image: "manager1:5000/mongotest:100" #"mongo" #"manager1:5000/cd/newspage-mongo:2"
     ports:
      - "9001:27017"
-    logging:
-      driver: gelf
-      options:
-        gelf-address: udp://localhost:12201
+    #logging:
+    #  driver: gelf
+    #  options:
+    #    gelf-address: udp://localhost:12201
     depends_on:
-     - webdis
+     - redis
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 5
 
   traefik:
     image: "traefik"
