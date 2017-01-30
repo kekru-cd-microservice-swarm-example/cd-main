@@ -56,4 +56,8 @@ class DockerStack extends AbstractPipelineScript implements Serializable {
         return stackName + '_default'
     }
 
+    def removeStack(){
+        steps.sh './docker stack rm ' + stackName
+    }
+
 }
