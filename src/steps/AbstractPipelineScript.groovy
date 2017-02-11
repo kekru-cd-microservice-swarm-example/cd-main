@@ -50,59 +50,8 @@ abstract class AbstractPipelineScript {
     }
 
     public final String getPublishedPortOfService(String fullServiceName, int targetPort){
-        return getPublishedPortOfService(fullServiceName, fullServiceName, targetPort);
+        return shResult(getFilePath(CDMain.SERVICE_PORTMAPPING_SCRIPT) + " " + fullServiceName + " " + targetPort)
     }
 
-    public final String getPublishedPortOfService(String bashCommandCreatingServiceNames, String fullServiceName, int targetPort){
-        String portMappingJSON = shResult('./docker service inspect --format=\'{"name": {{json .Spec.Name}}, "portmappings": {{json .Endpoint.Ports}}},\' '+bashCommandCreatingServiceNames)
-        if(portMappingJSON.endsWith(",")){
-            portMappingJSON = portMappingJSON.substring(0, portMappingJSON.length() -1)
-        }
-        portMappingJSON = "[" + portMappingJSON + "]";
-        /*
-        Beispiel für portMappingsJSON:
-        [{
-            "name": "cd91ff259_redis",
-            "portmappings": null
-        }, {
-            "name": "cd91ff259_newspage",
-            "portmappings": [{
-                    "Protocol": "tcp",
-                    "TargetPort": 8081,
-                    "PublishedPort": 30001,
-                    "PublishMode": "ingress"
-                }
-            ]
-        }, {
-            "name": "cd91ff259_newspage-mongo",
-            "portmappings": null
-        }, {
-            "name": "cd91ff259_webdis",
-            "portmappings": [{
-                    "Protocol": "tcp",
-                    "TargetPort": 7379,
-                    "PublishedPort": 30000,
-                    "PublishMode": "ingress"
-                }
-            ]
-        }]
-
-        */
-
-        def mappingList = new JsonSlurperClassic().parseText(portMappingJSON)
-        for (def mappingInfo : mappingList) {
-
-            if (String.valueOf(mappingInfo.name).equals(String.valueOf(fullServiceName))) {
-                for (def mapping : mappingInfo.portmappings) {
-
-                    if (String.valueOf(mapping.TargetPort).equals(String.valueOf(targetPort))) {
-                        return mapping.PublishedPort
-                    }
-                }
-            }
-        }
-
-        return -1
-    }
 
 }

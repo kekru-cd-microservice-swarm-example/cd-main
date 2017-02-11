@@ -1,0 +1,36 @@
+#!/bin/bash
+
+SERVICENAME=$1
+TARGETPORT=$2
+
+if [[ -z $SERVICENAME ]]; then
+   echo "no servicename as first parameter"
+   exit 1
+fi
+
+if [[ -z $TARGETPORT ]]; then
+   echo "no targetport as second parameter"
+   exit 1
+fi
+
+
+JSON=$(docker service inspect --format='{"name": {{json .Spec.Name}}, "portmappings": {{json .Endpoint.Ports}}}' "$SERVICENAME")
+
+#Beispielinhalt von JSON:
+#{"name": "test-traefik", "portmappings": [
+#    {"Protocol":"tcp","TargetPort":80,"PublishedPort":30000,"PublishMode":"ingress"},
+#    {"Protocol":"tcp","TargetPort":443,"PublishedPort":30001,"PublishMode":"ingress"},
+#    {"Protocol":"tcp","TargetPort":8080,"PublishedPort":30002,"PublishMode":"ingress"}
+#]}
+
+#echo $JSON
+
+RESULT=$(echo "$JSON" | jq -rc ".portmappings[] | select(.TargetPort | contains($TARGETPORT)) | .PublishedPort")
+
+if [[ -z $RESULT ]]; then
+   echo "no Portmapping for Service $SERVICENAME and TargetPort $TARGETPORT found. JSON was: $JSON"
+   exit 1
+fi
+
+echo $RESULT
+

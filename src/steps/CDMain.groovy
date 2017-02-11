@@ -8,6 +8,7 @@ class CDMain extends AbstractPipelineScript implements Serializable {
     public static final String SETUP_DOCKERCLIENT_FILE = 'setup-dockerclient'
     public static final String SETUP_REDISCLIENT_FILE = 'setup-redisclient'
     public static final String STACK_DEPLOY_SCRIPT = 'deploy-stack'
+    public static final String SERVICE_PORTMAPPING_SCRIPT = 'print-service-portmapping'
 
 
     CDMain(steps) {
@@ -29,6 +30,9 @@ class CDMain extends AbstractPipelineScript implements Serializable {
 
         //Bash Script, dass Service-Versionen im Stack-File ersetzt und damit den Stack startet
         copyResource(STACK_DEPLOY_SCRIPT, true)
+
+        //Script, das das Portmapping ausliesst, in Workspace kopieren
+        copyResource(SERVICE_PORTMAPPING_SCRIPT, true)
     }
 
 

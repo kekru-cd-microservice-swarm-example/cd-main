@@ -25,7 +25,7 @@ class DockerStack extends AbstractPipelineScript implements Serializable {
     }
 
     def getPublishedPort(String serviceName, int targetPort) {
-        return getPublishedPortOfService('$(./docker stack services -q '+stackName+')', fullServiceName(serviceName), targetPort)
+        return getPublishedPortOfService(fullServiceName(serviceName), targetPort)
     }
 
     public DockerStack deployStack(){
@@ -33,10 +33,6 @@ class DockerStack extends AbstractPipelineScript implements Serializable {
         def deployScript =  getFilePath(CDMain.STACK_DEPLOY_SCRIPT)
         def stackFile = getFilePath(CDMain.DOCKER_STACK_FILE)
         steps.sh deployScript + ' ' + stackFile + ' ' + stackName
-        //steps.sh 'sed -i "s|!!TRAEFIK_NETWORK_NAME!!|'+stackName+'_default|g" ' + stackFile
-        //steps.echo 'Deploy Stack'
-        //steps.sh 'cat ' + stackFile
-        //steps.sh './docker stack deploy --compose-file ' + stackFile + ' ' + stackName
         return this
     }
 
