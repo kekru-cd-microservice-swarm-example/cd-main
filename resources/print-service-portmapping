@@ -25,7 +25,7 @@ JSON=$(./docker service inspect --format='{"name": {{json .Spec.Name}}, "portmap
 
 #echo $JSON
 
-RESULT=$(echo "$JSON" | jq -rc ".portmappings[] | select(.TargetPort | contains($TARGETPORT)) | .PublishedPort")
+RESULT=$(echo "$JSON" | jq -r ".portmappings[] | select(.TargetPort | contains($TARGETPORT)) | .PublishedPort")
 
 if [[ -z $RESULT ]]; then
    echo "no Portmapping for Service $SERVICENAME and TargetPort $TARGETPORT found. JSON was: $JSON"
@@ -33,4 +33,3 @@ if [[ -z $RESULT ]]; then
 fi
 
 echo $RESULT
-
