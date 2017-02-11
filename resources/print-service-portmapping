@@ -14,7 +14,7 @@ if [[ -z $TARGETPORT ]]; then
 fi
 
 
-JSON=$(docker service inspect --format='{"name": {{json .Spec.Name}}, "portmappings": {{json .Endpoint.Ports}}}' "$SERVICENAME")
+JSON=$(./docker service inspect --format='{"name": {{json .Spec.Name}}, "portmappings": {{json .Endpoint.Ports}}}' "$SERVICENAME")
 
 #Beispielinhalt von JSON:
 #{"name": "test-traefik", "portmappings": [
