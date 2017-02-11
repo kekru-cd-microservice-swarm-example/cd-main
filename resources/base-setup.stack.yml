@@ -80,15 +80,13 @@ services:
 
   #Cluster aus Mongo DBs für den Newspage-Service
   newspage-mongo:
-    image: "manager1:5000/cd/newspage-mongo:!!NEWSPAGE_MONGO_VERSION!!"
+    image: "mongo" #"manager1:5000/cd/newspage-mongo:!!NEWSPAGE_MONGO_VERSION!!"
     ports:
      - "0:27017"
     logging:
       driver: gelf
       options:
         gelf-address: udp://localhost:12201
-    depends_on:
-     - redis
     deploy:
       mode: replicated
       replicas: 1
