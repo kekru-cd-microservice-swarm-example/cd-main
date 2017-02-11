@@ -67,7 +67,7 @@ class CDMain extends AbstractPipelineScript implements Serializable {
         return imageName.substring(imageName.lastIndexOf(':') +1)
     }
 
-    def waitForTCP(int port){
+    def waitForTCP(port){
         steps.sh './docker run --rm wait 10.1.6.210 '+port
     }
 
