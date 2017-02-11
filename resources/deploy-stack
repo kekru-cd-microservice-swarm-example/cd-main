@@ -21,6 +21,18 @@ NEWSPAGEVERSION=$(./redi.sh -g newspage-version)
 NEWSPAGEMONGOVERSION=$(./redi.sh -g newspage-mongo-version)
 COMMENTSSERVICEVERSION=$(./redi.sh -g commentsservice-version)
 
+if [[ -z $NEWSPAGEVERSION ]]; then
+   NEWSPAGEVERSION="0"
+fi
+
+if [[ -z $NEWSPAGEMONGOVERSION ]]; then
+   NEWSPAGEMONGOVERSION="0"
+fi
+
+if [[ -z $COMMENTSSERVICEVERSION ]]; then
+   COMMENTSSERVICEVERSION="0"
+fi
+
 if [ $TARGETMODE == "initial" ]; then
    TRAEFIK80="80"
    TRAEFIK443="443"
